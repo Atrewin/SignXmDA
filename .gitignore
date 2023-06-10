@@ -1,0 +1,22 @@
+# Ignore all .txt files
+*.txt
+
+# Ignore all files in the log directory
+log/*
+
+# Ignore the file private_key.pem
+private_key.pem
+
+data/*
+
+Dataset
+
+VAC_CSLR
+
+
+main.py
+
+video2tensor
+
+
+training_task

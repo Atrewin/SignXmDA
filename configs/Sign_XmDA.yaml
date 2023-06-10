@@ -1,0 +1,111 @@
+name: sign_experiment
+data:
+    gloss2text_data: 0  #"path to PGen/data/DA_paralle_sample/GPT.zh.T5.gloss:..PGen/data/DA_paralle_sample/De/GPT.zh"; 0 is ignore that
+    data_path: ./data/
+    version: phoenix_2014_trans
+    sgn: sign
+    txt: text
+    gls: gloss
+    train: CSLT/cslt.word.train.pickle.char.Teachers.newdataset #Path to pre-process dataset (ref to https://github.com/neccam/slt)
+    dev: CSLT/cslt.word.dev.pickle.char
+    test: CSLT/cslt.word.train.pickle.char
+    feature_size: 1024
+    level: word
+    txt_lowercase: true
+    max_sent_length: 400
+    random_train_subset: -1
+    random_dev_subset: -1
+testing:
+    forward_type: "sign"
+#    ckpt: ./training_task/0610_S2T_XmDA/best.ckpt
+#    log_file: ./training_task/0610_S2T_XmDA
+    recognition_beam_sizes:
+    - 1
+    - 2
+    - 3
+    - 4
+    translation_beam_sizes:
+    - 1
+    - 2
+    - 3
+    - 4
+    translation_beam_alphas:
+    - -2
+    - -1
+    - 0
+    - 1
+training:
+    reset_best_ckpt: false
+    reset_scheduler: false
+    reset_optimizer: false
+    random_seed: 56
+    forward_type: "sign" # Control the forward type in [sign, gloss, mixup] (ref to XmDA framework)
+    mixup_ratio: 0.6
+    model_dir: "./training_task/0610_S2T_XmDA"
+    recognition_loss_weight: 1.0
+    translation_loss_weight: 3.0
+    eval_metric: bleu
+    optimizer: adam
+    learning_rate: 0.001
+    batch_size: 128
+    num_valid_log: 2
+    epochs: 150
+    early_stopping_metric: eval_metric
+    batch_type: sentence
+    translation_normalization: batch
+    eval_recognition_beam_size: 1
+    eval_translation_beam_size: 1
+    eval_translation_beam_alpha: -1
+    overwrite: true
+    shuffle: true
+    use_cuda: true
+    translation_max_output_length: 60
+    keep_last_ckpts: 1
+    batch_multiplier: 1
+    logging_freq: 1000
+    validation_freq: 100
+    betas:
+    - 0.9
+    - 0.998
+    scheduling: plateau
+    learning_rate_min: 1.0e-07
+    weight_decay: 0.001
+    patience: 8
+    decrease_factor: 0.7
+    label_smoothing: 0.0
+model:
+    build_type: build_model_mixup
+    initializer: xavier
+    bias_initializer: zeros
+    init_gain: 1.0
+    embed_initializer: xavier
+    embed_init_gain: 1.0
+    tied_softmax: false
+    encoder:
+        type: transformer
+        num_layers: 1 #check
+        num_heads: 8
+        embeddings:
+            embedding_dim: 256 # add MLP check
+            scale: false
+            dropout: 0.3
+            norm_type: batch
+            activation_type: gelu #softsign
+        hidden_size: 256
+        ff_size: 1024
+        dropout: 0.25
+    gloss_pre_embedding: None
+    decoder:
+        type: transformer
+        num_layers: 1
+        num_heads: 8
+        embeddings:
+            embedding_dim: 256
+            scale: false
+            dropout: 0.15
+            norm_type: batch
+            activation_type: softsign
+        hidden_size: 256
+        ff_size: 1024
+        dropout: 0.25
+
