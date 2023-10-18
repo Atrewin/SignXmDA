@@ -33,7 +33,7 @@ distributions on PHOENIX-2014T dataset.
 ### The topological structure of input embeddings 
 
 <div align="center">
-    <img src="/images/embeddings.jpg" width="70%" title="Framework of Self-training with Uncertainty-Based Sampling."</img>
+    <img src="/images/embeddings.jpg" width="50%" title="Framework of Self-training with Uncertainty-Based Sampling."</img>
 </div>
 
 
